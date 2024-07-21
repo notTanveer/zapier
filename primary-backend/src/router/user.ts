@@ -8,7 +8,7 @@ import { JWT_PASSWORD } from "../config";
 const router = Router();
 
 router.post("/signup", async (req, res) => {
-    const body = req.body.username;
+    const body = req.body;
     const parsedData = SignUpSchema.safeParse(body);
 
     if (!parsedData.success) {
@@ -45,7 +45,7 @@ router.post("/signup", async (req, res) => {
 
 
 router.post("/signin", async (req, res) => {
-    const body = req.body.username;
+    const body = req.body;
     const parsedData = SignInSchema.safeParse(body);
 
     if (!parsedData.success) {
