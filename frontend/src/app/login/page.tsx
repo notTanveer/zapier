@@ -6,9 +6,9 @@ import { PrimaryButton } from "@/components/buttons/PrimaryButton";
 import axios from "axios";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { BACKEND_URL } from "../config";
 
 export default function() {
-    const BACKEND_URL = ""
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const router = useRouter();

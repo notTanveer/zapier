@@ -34,3 +34,5 @@ async function main() {
         })
     }
 }
+
+main()

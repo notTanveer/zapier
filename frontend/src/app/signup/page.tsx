@@ -6,9 +6,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { CheckFeature } from "@/components/CheckFeature";
 import { Input } from "@/components/Input";
+import { BACKEND_URL } from "../config";
 
 export default function () {
-  const BACKEND_URL = "";
   const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -72,7 +72,7 @@ export default function () {
                 }}
                 size="big"
               >
-                Sign u
+                Sign up
               </PrimaryButton>
             </div>
           </div>
