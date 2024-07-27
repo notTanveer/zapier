@@ -16,40 +16,41 @@ const types_1 = require("../types");
 const db_1 = require("../db");
 const router = (0, express_1.Router)();
 router.post("/", middleware_1.authMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const body = req.body;
     // @ts-ignore
     const id = req.id;
+    const body = req.body;
     const parsedData = types_1.ZapCreateSchema.safeParse(body);
     if (!parsedData.success) {
         return res.status(411).json({
-            message: "Invalid data",
+            message: "Incorrect inputs"
         });
     }
     const zapId = yield db_1.prismaClient.$transaction((tx) => __awaiter(void 0, void 0, void 0, function* () {
-        const zap = yield tx.zap.create({
+        const zap = yield db_1.prismaClient.zap.create({
             data: {
-                id: id,
+                userId: parseInt(id),
                 triggerId: "",
                 actions: {
                     create: parsedData.data.actions.map((x, index) => ({
                         actionId: x.availableActionId,
                         sortingOrder: index,
+                        metadata: x.actionMetadata
                     }))
                 }
             }
         });
         const trigger = yield tx.trigger.create({
             data: {
-                zapId: zap.id,
                 triggerId: parsedData.data.availableTriggerId,
-            },
+                zapId: zap.id,
+            }
         });
         yield tx.zap.update({
             where: {
-                id: zap.id,
+                id: zap.id
             },
             data: {
-                triggerId: trigger.id,
+                triggerId: trigger.id
             }
         });
         return zap.id;
@@ -58,50 +59,54 @@ router.post("/", middleware_1.authMiddleware, (req, res) => __awaiter(void 0, vo
         zapId
     });
 }));
-router.post("/", middleware_1.authMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get("/", middleware_1.authMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     // @ts-ignore
     const id = req.id;
-    const zaps = yield db_1.prismaClient.zap.findFirst({
+    const zaps = yield db_1.prismaClient.zap.findMany({
         where: {
-            id: id,
+            userId: id
         },
         include: {
             actions: {
                 include: {
-                    type: true,
+                    type: true
                 }
             },
             trigger: {
                 include: {
-                    type: true,
+                    type: true
                 }
             }
         }
     });
-    return res.json({ zaps });
+    return res.json({
+        zaps
+    });
 }));
 router.get("/:zapId", middleware_1.authMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    // @ts-ignore
+    //@ts-ignore
     const id = req.id;
     const zapId = req.params.zapId;
     const zap = yield db_1.prismaClient.zap.findFirst({
         where: {
             id: zapId,
-            // userId: id,
+            userId: id
         },
         include: {
             actions: {
                 include: {
-                    type: true,
+                    type: true
                 }
             },
             trigger: {
                 include: {
-                    type: true,
+                    type: true
                 }
             }
         }
     });
-    return res.json({ zap });
+    return res.json({
+        zap
+    });
 }));
 exports.zapRouter = router;
